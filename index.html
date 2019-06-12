@@ -31,7 +31,7 @@ https://github.com/sebmatton/jQuery-Flight-Indicators
     <h2>Attitude example</h2>
     <p>This is a simple example showing an attitude indicator with pitch of 3 degrees and roll of 8 degrees. As you can see, the size can be chosen to be as big as you want since we only use vector graphics (svg). For this example size was set to 350 pixels.</p>
     <p><pre><code class="language-javascript">var first_attitude = $.flightIndicator('#first_attitude', 'attitude', {size:350, roll:8, pitch:3, showBox : true});</code></pre></p>
-    //-->
+    -->
 
     <div class="examples">
         <div>
@@ -77,6 +77,26 @@ var variometer = $.flightIndicator('#variometer', 'variometer', { vario: -5, siz
 // static example
 var test_attitude = $.flightIndicator('#test_attitude', 'attitude', { roll: -99999, pitch: 3, size: 360 });
 
+// setup websocket with callbacks
+var urlHost = window.location.host;
+var arrUrl = urlHost.split(":", 1);
+var wsServer = 'ws://' + arrUrl[0] + ':9000';
+var ws = new WebSocket(wsServer);
+ws.onopen = function() {
+    console.log('WS: CONNECTED');
+};
+ws.onclose = function() {
+    console.log('WS: DISCONNECTED');
+    alert("DISCONNECT");
+};
+ws.onmessage = function(event) {
+    var arrEventData = event.data.split(" ", 2);
+    console.log('pitch: ' + arrEventData[0] + ', roll: ' + arrEventData[1]);
+    attitude.setPitch(parseFloat(arrEventData[0]));
+    attitude.setRoll(parseFloat(arrEventData[1]));
+};
+
+/*
 // Update at 20Hz
 var increment = 0;
 setInterval(function() {
@@ -101,6 +121,7 @@ setInterval(function() {
     // Vario update
     variometer.setVario(2*Math.sin(increment/10));
 }, 50);
+*/
 </script>
 </body>
 </html>
